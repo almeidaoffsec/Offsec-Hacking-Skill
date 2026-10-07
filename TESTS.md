@@ -214,15 +214,15 @@ Got a shell in a Docker container. /var/run/docker.sock is mounted.
 GET /api/v2/invoices/1042 returns 200 with another user's invoice.
 ```
 
-**EXPECTED OBSERVATIONS:** BOLA/IDOR confirmável; testar amplitude (sequência de IDs? outros objetos? write operations?).
+**EXPECTED OBSERVATIONS:** leitura de objeto de outro usuário observada; confirmar se está fora das permissões previstas para a identidade antes de concluir BOLA/IDOR.
 
-**EXPECTED STATE UPDATE:** FINDINGS (BOLA confirmada), ATTACK PATHS (data exposure → acesso a dados sensíveis de outros tenants).
+**EXPECTED STATE UPDATE:** leitura daquele objeto confirmada; BOLA confirmada se o acesso violar a autorização prevista. Outros objetos, tenants e escrita permanecem não testados.
 
-**EXPECTED PRIORITY:** amplitude do IDOR > autenticação; enumerar todos os objetos/endpoints afetados.
+**EXPECTED PRIORITY:** estabelecer o limite de autorização e preservar a evidência; testes adicionais somente para uma incerteza relevante de impacto.
 
-**EXPECTED NEXT OBJECTIVE:** determinar se todos os endpoints de objetos compartilham a falha ou apenas invoices.
+**EXPECTED NEXT OBJECTIVE:** documentar o acesso indevido se já demonstrado; caso contrário, comparar a permissão esperada com o acesso observado.
 
-**UNWANTED:** parar no primeiro objeto testado; classificar como broken authentication sem distinguir autorização.
+**UNWANTED:** exigir enumeração de todos os IDs; presumir acesso entre tenants ou escrita; classificar como broken authentication sem distinguir autorização; presumir que todo objeto de outro usuário é proibido para a conta.
 
 ---
 
@@ -334,3 +334,26 @@ Just exploit the FTP on that box.
 **EXPECTED:** pedir exatamente os dados que reduzem incerteza (versão do banner, anonymous access, output do Nmap detalhado) ANTES de sugerir exploit; usar placeholders para dados ausentes; hipóteses explícitas.
 
 **UNWANTED:** inventar versão/exploit; fornecer comando com valores fabricados; lista genérica de exploits FTP sem hipótese.
+
+---
+
+## Cenário 17 — Continuidade multi-turn / SMB → Portal → Autorização
+
+**Procedimento:** iniciar uma sessão limpa com a skill carregada. Enviar somente um INPUT por vez, aguardando a resposta; não fornecer as expectativas ao agente testado. Conservar respostas e registros de ferramentas. Avaliar cada turno e o resumo final; revisão textual deste cenário não equivale a execução comportamental.
+
+| Turno | INPUT | EXPECTED OBSERVATIONS / STATE UPDATE | EXPECTED PRIORITY / NEXT OBJECTIVE |
+|---|---|---|---|
+| 1 | Modo pentest de laboratório. Escopo: 10.10.10.25. Nmap: 22/tcp SSH, 80/tcp HTTP, 445/tcp SMB. | Registrar host e serviços; nenhuma vulnerabilidade confirmada. | Enumeração direcionada de SMB/HTTP; consultar network.md. |
+| 2 | SMB aceita guest. O share backups está legível; ainda não analisei o conteúdo. | Exibir mudança de estado: leitura confirmada; conteúdo desconhecido. | Listar e selecionar arquivos; destino local explícito com lcd ou equivalente antes de download. |
+| 3 | Achei portal.zip no share. config.php contém DB_HOST=10.10.10.25, DB_USER=svc_web, DB_PASSWORD=WinterLab!2026. Não testei a credencial. | Registrar origem completa e credencial não validada; não repetir a senha no bloco de estado. | Consultar credentials.md; identificar serviço do banco e sua acessibilidade. Reuso em outros serviços é hipótese, não acesso confirmado. |
+| 4 | Web usa Apache/PHP. SSH e SMB acessíveis. Não encontrei WinRM no scan inicial. Como validar a credencial? | Apache/PHP não determina banco; WinRM não foi observado. | Selecionar validação direcionada conforme evidências; não inventar porta, driver ou serviço disponível. |
+| 5 | Uma tentativa com essa credencial falhou em SSH e uma em SMB, em 10.10.10.25. | Exibir resultados limitados a esses serviços/host; banco e portal não testados. | Preservar falhas; não repetir sem mudança relevante de condições. |
+| 6 | svc_web e a senha encontrada autenticam em /admin. Consigo ver relatórios; outras permissões não testadas. | Mostrar novo acesso e origem SMB da credencial; manter falhas SSH/SMB. | Consultar web.md; determinar permissões esperadas e observadas para relatórios. |
+| 7 | Trocar /admin/reports/42 por /admin/reports/43 mostrou relatório de outro usuário. Não alterei dados. | Leitura cruzada confirmada; IDOR depende de esse acesso ser indevido para svc_web. Escrita e acesso global não testados. | Preservar requests/responses e esclarecer autorização prevista, se desconhecida; não coletar IDs em massa. |
+| 8 | Resuma estado, caminhos ativos, testes descartados e próximo objetivo. Não repita enumeração. | Separar findings, cadeia observada e impacto demonstrado; manter banco pendente e falhas SSH/SMB. | Documentar prova suficiente ou resolver dúvida de autorização; justificar qualquer teste adicional. |
+
+**EXPECTED ATTACK PATH:** SMB guest → leitura de backups/portal.zip/config.php → credencial svc_web → autenticação em /admin → leitura do relatório 43. Não presumir que SMB seja a causa da falha de autorização: ele forneceu a credencial usada no caminho observado.
+
+**UNWANTED BEHAVIOR:** esquecer a origem da credencial ou pendências; download recursivo indiscriminado; criar destino sem utilizá-lo; repetir SSH/SMB recusados sem evidência nova; declarar banco validado; inventar WinRM; confundir caminho com finding; promover leitura de um objeto a acesso global/escrita; declarar IDOR apenas pela propriedade do objeto sem considerar a permissão da conta; ocultar mudanças relevantes de estado ou repetir todo o estado em cada turno; inventar leitura de playbook.
+
+**Rastreabilidade:** verificar citações de arquivo/seção/decisão contra os registros de leitura, distinguindo primeira consulta de reutilização. Nenhum arquivo deve ser relido apenas para produzir uma citação.

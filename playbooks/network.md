@@ -36,6 +36,26 @@ Tecnologias, headers, redirects, cookies, vhosts, endpoints, APIs, JavaScript, a
 ### SMB
 Dialect → signing → shares → acesso guest → usuários/domínio → permissões.
 
+Share legível → liste nomes e tamanhos → selecione arquivos conforme a hipótese (configs e backups, por exemplo) → defina o destino local → baixe seletivamente. Se estiver vazio ou o acesso falhar, registre o resultado antes de mudar de caminho. Extensão é pista, não garantia de conteúdo; evite `recurse ON` + `mget *` como coleta padrão.
+
+Exemplo com share `backups` e `portal.zip` já identificados:
+
+```bash
+mkdir -p /tmp/opencode/<TARGET_IP>-backups
+smbclient //<TARGET_IP>/backups -N
+```
+
+No prompt do `smbclient`:
+
+```text
+ls
+lcd /tmp/opencode/<TARGET_IP>-backups
+get portal.zip
+exit
+```
+
+Substitua `<TARGET_IP>` nos dois contextos. Criar o diretório não muda o destino do download: `lcd` define o diretório local. Registre host, share, caminho remoto e destino da evidência; inspecione o arquivo selecionado antes de ampliar a coleta. Credenciais encontradas encaminham a investigação para `playbooks/credentials.md`, mantendo sua origem e validade ainda não testada.
+
 ### LDAP
 Naming contexts → usuários → grupos → computadores → objetos → ACLs → informações de domínio.
 
