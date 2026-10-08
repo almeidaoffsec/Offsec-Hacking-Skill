@@ -36,7 +36,7 @@ Tecnologias, headers, redirects, cookies, vhosts, endpoints, APIs, JavaScript, a
 ### SMB
 Dialect → signing → shares → acesso guest → usuários/domínio → permissões.
 
-Share legível → liste nomes e tamanhos → selecione arquivos conforme a hipótese (configs e backups, por exemplo) → defina o destino local → baixe seletivamente. Se estiver vazio ou o acesso falhar, registre o resultado antes de mudar de caminho. Extensão é pista, não garantia de conteúdo; evite `recurse ON` + `mget *` como coleta padrão.
+Share legível → liste nomes e tamanhos → selecione arquivos conforme a hipótese (configs e backups, por exemplo) → defina o destino local → baixe seletivamente. Se estiver vazio ou o acesso falhar, registre o resultado antes de mudar de caminho. Extensão é pista, não garantia de conteúdo; evite `recurse ON` + `mget *` como coleta padrão — download em massa é ruído desnecessário (alerta de transferência anômala, coleta de lixo que esconde o que importa), não uma limitação ética.
 
 Exemplo com share `backups` e `portal.zip` já identificados:
 

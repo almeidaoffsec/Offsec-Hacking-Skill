@@ -39,6 +39,9 @@ Ferramentas: NetExec (spray direcionado por serviço), Impacket (psexec/wmiexec/
 
 ## Regras do playbook
 
+- Reuso de credencial entre serviços é teste legítimo de primeira ordem em ambientes mal configurados — service accounts reutilizados entre banco, SSH e WinRM são achado clássico. Uma tentativa direcionada por serviço confirmado como acessível é o padrão; spray e listas não.
+- Classifique o resultado da tentativa, não apenas sucesso/falha: "access denied" refuta a credencial naquele serviço e condições; timeout/reset é inconclusivo; 429 com Retry-After é limitação sinalizada — respeite o intervalo antes de repetir.
+- Sucesso com fallback possível (ex.: guest já aceito no SMB) só confirma identidade após excluir o fallback; recusa permanece uma recusa nessas condições — não é "menos informativa" por existir fallback no sucesso.
 - Não teste caminhos aleatórios quando relações de domínio ou enumeração permitirem priorização.
 - Antes de crackear, pergunte: o material funciona diretamente em algum serviço? NetNTLM (v1/v2) é relayable antes de crackeável.
 - Credencial nova atualiza automaticamente: IDENTIDADES, ACESSO e ATTACK PATHS do Target State.

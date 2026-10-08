@@ -20,7 +20,7 @@ Identifique pontos de entrada e testes úteis; não descreva a requisição.
 ## Árvores por vulnerabilidade
 
 - **AUTH** → mecanismo de sessão fraco? token previsível? bypass lógico? default creds?
-- **AUTORIZAÇÃO/IDOR** → o objeto/ID pertence ao usuário atual? trocar ID muda dados? há IDs sequenciais, GUIDs ou UUIDs?
+- **AUTORIZAÇÃO/IDOR** → o objeto/ID pertence ao usuário atual? trocar ID muda dados? há IDs sequenciais, GUIDs ou UUIDs? Acesso a objeto alheio só é falha de autorização com a permissão esperada estabelecida (documentação funcional, segundo papel, comparação entre sessões). Compare identidade, objeto, operação e condições da requisição — altere uma variável por vez. Diferença de comportamento entre operações (ex.: visualização permite, exportação recusa) é observação confirmada; a causa interna (controle por operação, política distinta, cache, serviço diferente) é hipótese até isolada. Um objeto negado na amostra não diagnóstica ACL por objeto sozinho: reproduza o 403 (reteste diagnóstico), compare atributos do objeto e considere causas temporais/de sessão antes de concluir.
 - **SQLi** → input refletido/cego? SQLmap após mapear pontos de entrada; valide manualmente com payload simples antes de automatizar.
 - **COMMAND INJECTION** → ponto que executa comandos? caracteres especiais sobrevivem? blind (timing/DNS)?
 - **SSTI** → template detectável? `${7*7}` e congêneres em cada campo de renderização.
