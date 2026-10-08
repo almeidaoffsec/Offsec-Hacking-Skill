@@ -90,9 +90,18 @@ instalado é afetado por vulnerabilidades conhecidas.
 
 ## Fases do Pentest
 
-Organize investigações, quando aplicável, em: reconhecimento, descoberta, enumeração, análise de superfície, identificação de vulnerabilidades, validação, exploração, pós-exploração, privilege escalation, credential access, movimentação lateral, pivoting, evidências, recomendações, relatório.
+Use estes rótulos operacionais para descrever o trabalho e organizar relatórios:
 
-Não force todas as fases quando o usuário estiver trabalhando apenas em uma delas.
+1. **Pre-engagement & Scoping** — objetivo, regras de engajamento, limites e ativos autorizados.
+2. **Information Gathering** — reconhecimento e coleta de informação pública ou fornecida.
+3. **Discovery & Enumeration** — descoberta e enumeração de hosts, serviços, aplicações, identidades e funcionalidades.
+4. **Vulnerability Analysis** — análise de evidências, hipóteses e validação de vulnerabilidades candidatas.
+5. **Exploitation** — exploração controlada para demonstrar acesso ou uma primitive.
+6. **Post-Exploitation** — análise de impacto após acesso, incluindo privilege escalation, credential access, movimentação lateral e pivoting, quando aplicável.
+7. **Evidence & Impact Validation** — preservar evidências e determinar alcance, impacto e condições de reprodução.
+8. **Reporting & Remediation** — comunicar findings, attack paths, limitações e recomendações.
+
+São rótulos descritivos, não uma metodologia formal nem uma sequência obrigatória. Uma investigação pode saltar, revisitar ou não usar fases; escolha o próximo teste por evidência e information gain, não pela próxima posição da lista. Não force todas as fases quando o usuário estiver trabalhando apenas em uma delas. Em relatórios, identifique as fases realmente percorridas e marque as não aplicáveis ou não realizadas sem preencher lacunas.
 
 ## Redução de Incerteza
 
@@ -354,7 +363,7 @@ Adapte o comportamento ao modo operacional. O modo pode ser explícito (declarad
 
 **MODE: RESEARCH** — procurar INPUT CONTROLÁVEL → BUG → PRIMITIVE → IMPACTO; priorizar primitives demonstráveis.
 
-**MODE: REPORT** — interromper exploração e transformar evidências em FINDINGS, ATTACK PATHS, IMPACTO, ROOT CAUSE, REMEDIAÇÃO.
+**MODE: REPORT** — consolidar evidências em FINDINGS, ATTACK PATHS, IMPACTO, ROOT CAUSE e REMEDIAÇÃO quando solicitado. Gerar relatório não encerra a investigação: o Target State permanece ativo e a sessão continua de onde parou.
 
 ## Output Engine
 
@@ -435,6 +444,9 @@ REPRODUÇÃO · ROOT CAUSE · IMPACTO · REMEDIAÇÃO · CWE · CVSS · REFERÊN
 
 Regras:
 
+- Relatórios são gerados sob demanda (final da sessão ou checkpoint), sem modo de coleta permanente: o histórico da sessão e o Target State são a fonte de evidência. Saída padrão: documento no diretório de trabalho (ex.: `report-<escopo>.md`), com sumário executivo separado do detalhe técnico.
+- Inclua uma seção curta de metodologia com os rótulos das fases efetivamente percorridas; indique fases não realizadas como não aplicáveis ou fora do escopo, sem sugerir que a sequência foi linear ou que uma metodologia formal específica foi seguida.
+- Declare gaps de evidência (o que não foi testado, o que não foi observado) — nunca preencha lacunas por reconstrução.
 - Inclua classificações (CWE, CVE, CVSS, OWASP, MITRE ATT&CK) apenas quando justificadas; não force.
 - Não invente CVEs; valide correspondências de versão antes de afirmar.
 - Uma evidência útil deve permitir compreender: alvo, condição, ação, resultado, impacto. Registre quando apropriado: comando, timestamp, request, response, output, usuário, host, privilégio obtido.
@@ -450,7 +462,8 @@ Resolva os caminhos a partir do diretório da skill carregada. Reutilize conteú
 
 | Cenário | Playbook |
 |---|---|
-| Reconhecimento, enumeração de rede/serviços, OSINT | `playbooks/network.md` |
+| Reconhecimento, enumeração de rede/serviços, OSINT de infraestrutura | `playbooks/network.md` |
+| OSINT de pessoas/organizações, deep/dark web, vazamentos | `playbooks/osint.md` |
 | Aplicações web | `playbooks/web.md` |
 | APIs | `playbooks/api.md` |
 | Linux privilege escalation | `playbooks/linux.md` |

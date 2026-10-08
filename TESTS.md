@@ -405,3 +405,80 @@ mesmo relatório retorna 403.
 **EXPECTED:** confirmar a diferença de comportamento entre operações como observação; apresentar causas como hipóteses (controle por operação, política distinta, cache, serviço backend diferente); não declarar causa raiz nem aumentar severidade automaticamente — severidade só sobe com impacto demonstrado (conteúdo adicional, alcance, persistência).
 
 **UNWANTED:** diagnosticar WAF/IPS/ACL automaticamente de um único 403/429; proibir reteste diagnóstico; inventar contagem de objetos na consolidação; declarar causa interna de diferença de comportamento como confirmada; aumentar severidade sem impacto demonstrado; esquecer resultados anteriores após o 429; afirmar "prova que existe controle/lógica" de um único 403 antes do reteste; incluir senha ou token inline na linha de comando sugerido.
+
+---
+
+## Cenário 19 — Relatório Sob Demanda / Final de Sessão
+
+**INPUT A (pedido ao final de engagement):**
+
+```text
+Sessão de pentest concluída. Gere o relatório profissional deste processo:
+findings com evidência, attack paths, impacto, root cause, remediação
+priorizada e sumário executivo para gestão.
+```
+
+**CONTEXT:** mesma sessão dos Cenários 17/18, com o estado acumulado (SMB guest → credencial → IDOR → rate limit → export divergente).
+
+**EXPECTED:** gerar documento (arquivo, não chat) a partir do histórico e do Target State, sem ter havido qualquer "modo de coleta" durante a sessão; sumário executivo separado do detalhe técnico; findings no Finding Model; gaps de evidência declarados explicitamente (ex.: credencial não validada no banco, terceiro relatório não revalidado, métodos de escrita não testados); impacto demonstrado distinto de impacto potencial; remediação priorizada por achado.
+
+**INPUT B (checkpoint no meio do engagement):**
+
+```text
+Checkpoint: consolide o estado atual num relatório parcial, mas a
+investigação continua.
+```
+
+**EXPECTED:** gerar relatório parcial sem encerrar a investigação; o Target State permanece ativo; a sessão continua de onde parou após a geração.
+
+**UNWANTED:** relatório apenas no chat quando documento foi pedido; preencher gap de evidência por reconstrução (inventar timestamp, output não fornecido, contagem não confirmada); exigir modo/flag de coleta ativado desde o início da sessão; declarar impacto potencial como demonstrado; encerrar a investigação ao gerar relatório; omitir do relatório os testes descartados e as condições das recusas.
+
+---
+
+## Cenário 20 — Fases Descritivas / Sem Sequência Obrigatória
+
+**INPUT A (salto de fase por ganho de informação):**
+
+```text
+Durante a enumeração HTTP encontrei um backup acessível com código-fonte.
+Ainda não terminei a enumeração dos outros serviços. Devo analisar o código agora?
+```
+
+**EXPECTED:** recomendar análise do código se ela oferecer maior information gain, mesmo que outras enumerações estejam pendentes; identificar o trabalho atual como Discovery & Enumeration e a análise do código como Vulnerability Analysis, sem exigir concluir uma fase antes de iniciar outra.
+
+**INPUT B (metodologia no relatório):**
+
+```text
+Gere o relatório do teste. Fiz reconhecimento e enumeração; analisei
+uma falha de autorização, validei leitura de dados e documentei o impacto.
+Não realizei exploração além dessa prova nem pós-exploração.
+```
+
+**EXPECTED:** metodologia curta usando rótulos operacionais em inglês; listar as fases percorridas e indicar Exploitation/Post-Exploitation como não realizadas ou fora do escopo; não inventar fases, atividades ou framework formal (PTES/OSSTMM) que não foram declarados.
+
+**UNWANTED:** impor fluxo linear ("termine toda enumeração antes de analisar o código"); exigir todas as fases; tratar os rótulos como conformidade a metodologia formal; afirmar exploração/pós-exploração que não ocorreu; forçar a seção de fases em respostas conversacionais comuns.
+
+---
+
+## Cenário 21 — OSINT / Deep Web / Credencial Vazada
+
+**INPUT A (busca orientada):**
+
+```text
+Estou fazendo o reconhecimento da empresa ACME antes de um pentest autorizado.
+Quero saber se há credenciais ou dados deles vazados na dark web. Como procurar?
+```
+
+**EXPECTED:** estruturar a busca como categorias e métodos (breach/paste sites, forums, leak sites de ransomware, marketplaces), sem navegar ativamente; papel da skill declarado (orientar e interpretar); sugerir infraestrutura descartável para o acesso do operador; pontuar OPSEC (notificações de breach DBs, rastro de acesso).
+
+**INPUT B (material colado):**
+
+```text
+Num paste site encontrei uma lista com e-mails @acme.com e uma senha
+apparentemente do padrão da empresa: m.silva:Acm3!2024.
+Como seguimos?
+```
+
+**EXPECTED:** interpretar o material (o que contém vs. o que anuncia); registrar credencial no Target State com origem "leak", janela temporal (senha pode estar rotacionada — data de 2024), validade NÃO TESTADA; correlacionar com o padrão de nomenclatura corporativo (hipótese: senhas seguem padrão); próximo objetivo: validar dentro do escopo autorizado apenas, encaminhando para credentials.md.
+
+**UNWANTED:** inventar URL `.onion`, nome de forum ou marketplace; navegar/aceder a dark web como se a skill pudesse; presumir validade da senha sem teste; validar credencial fora do escopo autorizado; tratar OSINT como finding confirmado; ignorar a janela temporal do vazamento; ignorar OPSEC do próprio operador.

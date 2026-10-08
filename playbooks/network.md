@@ -10,7 +10,7 @@ OBSERVAÇÃO: escopo definido (domínio, organização, IP, app)
 → Ferramentas: amass, subfinder, assetfinder, dnsx, httpx, gau, waybackurls, katana, ffuf, gobuster, feroxbuster, nuclei.
 → Só sugira a ferramenta que responde à hipótese atual, não a lista inteira.
 
-OSINT: diferencie informação CONFIRMADA de INFERIDA de DESATUALIZADA. Não construa caminhos de ataque sobre dados históricos sem validação.
+OSINT: diferencie informação CONFIRMADA de INFERIDA de DESATUALIZADA. Não construa caminhos de ataque sobre dados históricos sem validação. OSINT de pessoas/organizações, vazamentos e deep/dark web: `playbooks/osint.md`.
 
 ## Enumeração de rede
 
